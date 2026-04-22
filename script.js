@@ -32,7 +32,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function initApp() {
-        setCurrentDate(); // 🍒 초기 날짜 설정
+        // 접속 시점의 실제 날짜로 초기화
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const date = String(now.getDate()).padStart(2, '0');
+        dateInput.value = `${year}-${month}-${date}`;
+        
+        updateDay();
         buildTables();
         loadData(dateInput.value);
         
@@ -42,19 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         setupAutoSave();
-        
-        // 🍒 자정 및 날짜 변경 감시 엔진 가동
-        startDayWatchdog(); 
-    }
-
-    // 🍒 현재 시스템 날짜로 세팅하는 함수
-    function setCurrentDate() {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const date = String(now.getDate()).padStart(2, '0');
-        dateInput.value = `${year}-${month}-${date}`;
-        updateDay();
+        startDayWatchdog(); // 자정 감시 엔진
     }
 
     function updateDay() {
@@ -62,27 +57,14 @@ document.addEventListener('DOMContentLoaded', () => {
         dayDisplay.textContent = daysOfWeek[selDate.getDay()] + '요일';
     }
 
-    // 🍒 [이중 보안] 날짜 변경 감시 엔진
+    // 자정 및 날짜 변경 감시 (1분 주기)
     function startDayWatchdog() {
-        // 1. 자정 정각에 새로고침 예약 (기존 로직)
-        const now = new Date();
-        const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5);
-        const msUntilMidnight = tomorrow.getTime() - now.getTime();
-        
-        setTimeout(() => {
-            // 캐시를 무시하고 최신 데이터를 가져오기 위해 타임스탬프 추가
-            window.location.href = window.location.pathname + '?t=' + new Date().getTime();
-        }, msUntilMidnight);
-
-        // 2. 1분마다 현재 날짜와 입력된 날짜를 대조 (절전 모드 대비)
         setInterval(() => {
             const todayStr = new Date().toISOString().split('T')[0];
-            // 만약 현재 날짜가 입력창의 날짜보다 미래라면 (자정이 지났다면)
             if (todayStr > dateInput.value) {
-                console.log("새로운 날짜 감지! 앱을 갱신합니다.");
                 window.location.href = window.location.pathname + '?t=' + new Date().getTime();
             }
-        }, 60000); // 1분마다 체크
+        }, 60000);
     }
 
     function setupAutoSave() {
@@ -164,7 +146,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-function toggleFullScreen() {
-    if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); }
-    else { if (document.exitFullscreen) document.exitFullscreen(); }
-}
+// --- 🍒 캡틴의 요청사항: 전역 함수 정의 (어디서든 호출 가능하게!) ---
+
+// 1. 로그아웃 후 로그인 화면으로 복귀
+window.logout = function() {
+    firebase.auth().signOut().then(() => {
+        console.log("Logged out successfully");
+        location.replace("login.html");
+    }).catch((error) => {
+        console.error("Logout Error:", error);
+        location.replace("login.html"); // 에러 나도 일단 이동
+    });
+};
+
+// 2. 전체화면 토글
+window.toggleFullScreen = function() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+    } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+    }
+};

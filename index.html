@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
@@ -30,16 +31,17 @@
                 <button onclick="toggleFullScreen()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded border border-slate-500 font-bold transition flex items-center gap-2">
                     <i class="fas fa-expand"></i> 전체화면
                 </button>
-                <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded border border-slate-500 font-bold transition">
-                    <i class="fas fa-print mr-2"></i>인쇄
+                <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded border border-slate-500 font-bold transition flex items-center gap-2">
+                    <i class="fas fa-print"></i> 인쇄
                 </button>
-                <button onclick="window.close()" class="bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded border border-rose-500 font-bold transition">
-                    <i class="fas fa-times mr-2"></i>닫기
+                <button onclick="logout()" class="bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded border border-rose-500 font-bold transition flex items-center gap-2">
+                    <i class="fas fa-sign-out-alt"></i> 닫기
                 </button>
             </div>
         </div>
 
         <main class="log-container flex-1 flex flex-col gap-4 p-2 bg-slate-900 border-4 border-pink-500/30 rounded-xl overflow-hidden">
+            
             <section class="flex-1 flex flex-col">
                 <div class="flex justify-between items-end mb-1 px-2">
                     <h2 class="text-xl font-black text-blue-400"><i class="fas fa-truck-field mr-2"></i>1. L-CO₂ 출고현황</h2>
@@ -60,12 +62,14 @@
                                     <th>출발시간</th>
                                 </tr>
                             </thead>
-                            <tbody id="lco2-industrial-body"></tbody>
+                            <tbody id="lco2-industrial-body">
+                                </tbody>
                         </table>
                     </div>
                     <div class="bg-slate-800 rounded-lg overflow-hidden border border-slate-700 flex flex-col">
                         <table class="w-full text-center border-collapse flex-1">
-                            <tbody id="lco2-medical-body"></tbody>
+                            <tbody id="lco2-medical-body">
+                                </tbody>
                         </table>
                         <div class="bg-slate-900 border-t-2 border-slate-600 p-2 grid grid-cols-3 gap-2 text-xs font-black">
                             <div class="bg-emerald-900/30 p-2 rounded border border-emerald-500/30 flex justify-between">
@@ -102,7 +106,8 @@
                                     <th>출발시간</th>
                                 </tr>
                             </thead>
-                            <tbody id="di-left-body"></tbody>
+                            <tbody id="di-left-body">
+                                </tbody>
                         </table>
                     </div>
                     <div class="bg-slate-800 rounded-lg overflow-hidden border border-slate-700 flex flex-col">
@@ -117,7 +122,8 @@
                                     <th>출발시간</th>
                                 </tr>
                             </thead>
-                            <tbody id="di-right-body"></tbody>
+                            <tbody id="di-right-body">
+                                </tbody>
                         </table>
                         <div class="bg-slate-900 border-t-2 border-slate-600 p-2 flex justify-end">
                             <div class="bg-purple-900/40 px-6 py-2 rounded border border-purple-500 flex gap-4 text-lg font-black">
