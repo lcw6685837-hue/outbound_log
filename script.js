@@ -32,17 +32,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function initApp() {
-        const today = new Date();
-        dateInput.value = today.toISOString().split('T')[0];
-        updateDay();
+        setCurrentDate(); // 🍒 초기 날짜 설정
         buildTables();
         loadData(dateInput.value);
+        
         dateInput.addEventListener('change', () => {
             updateDay();
             loadData(dateInput.value);
         });
+        
         setupAutoSave();
-        scheduleMidnightRefresh(); // 자정 자동 갱신 작동
+        
+        // 🍒 자정 및 날짜 변경 감시 엔진 가동
+        startDayWatchdog(); 
+    }
+
+    // 🍒 현재 시스템 날짜로 세팅하는 함수
+    function setCurrentDate() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const date = String(now.getDate()).padStart(2, '0');
+        dateInput.value = `${year}-${month}-${date}`;
+        updateDay();
     }
 
     function updateDay() {
@@ -50,11 +62,27 @@ document.addEventListener('DOMContentLoaded', () => {
         dayDisplay.textContent = daysOfWeek[selDate.getDay()] + '요일';
     }
 
-    function scheduleMidnightRefresh() {
+    // 🍒 [이중 보안] 날짜 변경 감시 엔진
+    function startDayWatchdog() {
+        // 1. 자정 정각에 새로고침 예약 (기존 로직)
         const now = new Date();
         const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5);
         const msUntilMidnight = tomorrow.getTime() - now.getTime();
-        setTimeout(() => { window.location.reload(true); }, msUntilMidnight);
+        
+        setTimeout(() => {
+            // 캐시를 무시하고 최신 데이터를 가져오기 위해 타임스탬프 추가
+            window.location.href = window.location.pathname + '?t=' + new Date().getTime();
+        }, msUntilMidnight);
+
+        // 2. 1분마다 현재 날짜와 입력된 날짜를 대조 (절전 모드 대비)
+        setInterval(() => {
+            const todayStr = new Date().toISOString().split('T')[0];
+            // 만약 현재 날짜가 입력창의 날짜보다 미래라면 (자정이 지났다면)
+            if (todayStr > dateInput.value) {
+                console.log("새로운 날짜 감지! 앱을 갱신합니다.");
+                window.location.href = window.location.pathname + '?t=' + new Date().getTime();
+            }
+        }, 60000); // 1분마다 체크
     }
 
     function setupAutoSave() {
