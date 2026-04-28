@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function initApp() {
-        // 접속 시점의 실제 날짜로 초기화
         const now = new Date();
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -49,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         setupAutoSave();
-        startDayWatchdog(); // 자정 감시 엔진
+        startDayWatchdog();
     }
 
     function updateDay() {
@@ -57,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
         dayDisplay.textContent = daysOfWeek[selDate.getDay()] + '요일';
     }
 
-    // 자정 및 날짜 변경 감시 (1분 주기)
     function startDayWatchdog() {
         setInterval(() => {
             const todayStr = new Date().toISOString().split('T')[0];
@@ -103,6 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const diL = document.getElementById('di-left-body');
         const diR = document.getElementById('di-right-body');
         indBody.innerHTML = ''; medBody.innerHTML = ''; diL.innerHTML = ''; diR.innerHTML = '';
+        
+        // L-CO2 생성
         for(let i=1; i<=18; i++) indBody.appendChild(createRow('ind', i));
         const medNos = [19, 20, 21, 'TITLE', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
         medNos.forEach(no => {
@@ -115,6 +115,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 medBody.appendChild(createRow('med', no));
             }
         });
+        
+        // D/I 생성
         for(let i=1; i<=15; i++) {
             diL.appendChild(createDiRow('diL', i));
             diR.appendChild(createDiRow('diR', i+15));
@@ -127,9 +129,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return tr;
     }
 
+    // 🍒 D/I 전용 행 생성 (출고처 컬럼 포함)
     function createDiRow(prefix, no) {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${no}</td><td><input type="text" id="${prefix}_vNo_${no}" class="att-input sync-item"></td><td><input type="text" id="${prefix}_spec_${no}" class="att-input sync-item"></td><td><input type="text" id="${prefix}_count_${no}" class="att-input sync-item"></td><td><input type="text" id="${prefix}_qty_${no}" class="att-input sync-item di-calc text-right px-3"></td><td><input type="text" id="${prefix}_time_${no}" class="att-input sync-item"></td>`;
+        tr.innerHTML = `
+            <td>${no}</td>
+            <td><input type="text" id="${prefix}_vNo_${no}" class="att-input sync-item"></td>
+            <td><input type="text" id="${prefix}_dest_${no}" class="att-input sync-item"></td> <td><input type="text" id="${prefix}_spec_${no}" class="att-input sync-item"></td>
+            <td><input type="text" id="${prefix}_count_${no}" class="att-input sync-item"></td>
+            <td><input type="text" id="${prefix}_qty_${no}" class="att-input sync-item di-calc text-right px-3"></td>
+            <td><input type="text" id="${prefix}_time_${no}" class="att-input sync-item"></td>
+        `;
         return tr;
     }
 
@@ -146,24 +156,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// --- 🍒 캡틴의 요청사항: 전역 함수 정의 (어디서든 호출 가능하게!) ---
-
-// 1. 로그아웃 후 로그인 화면으로 복귀
 window.logout = function() {
-    firebase.auth().signOut().then(() => {
-        console.log("Logged out successfully");
-        location.replace("login.html");
-    }).catch((error) => {
-        console.error("Logout Error:", error);
-        location.replace("login.html"); // 에러 나도 일단 이동
-    });
+    firebase.auth().signOut().then(() => { location.replace("login.html"); });
 };
 
-// 2. 전체화면 토글
 window.toggleFullScreen = function() {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-    } else {
-        if (document.exitFullscreen) document.exitFullscreen();
-    }
+    if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); }
+    else { if (document.exitFullscreen) document.exitFullscreen(); }
 };
