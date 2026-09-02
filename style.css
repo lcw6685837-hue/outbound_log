@@ -11,7 +11,7 @@ body {
 }
 
 /* 스크롤바 디자인 */
-::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #0f172a; }
 ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
 
@@ -23,17 +23,19 @@ body {
     border: none;
     outline: none;
     color: #e2e8f0;
-    padding: 4px;
-    font-size: 0.9rem;
+    padding: 1px 3px;
+    font-size: 1.02rem;
     text-align: center;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .text-right { text-align: right !important; }
+.text-left { text-align: left !important; }
 
 /* 테이블 격자 구조 */
 table { table-layout: fixed; width: 100%; border-collapse: collapse; }
-td { border: 1px solid #334155; height: 31px; padding: 0; }
+td { border: 1px solid #334155; height: 30px; padding: 0; font-size: 0.95rem; font-weight: 700; }
+th { font-size: 0.9rem; font-weight: 800; }
 
 /* 날짜 입력창 커스텀 */
 input[type="date"]::-webkit-calendar-picker-indicator { 
@@ -47,92 +49,117 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 /* --------------------------------------------------
-   2. 🖨️ 인쇄 최적화 섹션 (배경 흰색 + 글자 검정 고정)
+   2. 🖨️ 인쇄 최적화 섹션 (A4 단 1장 완전 고정)
 -------------------------------------------------- */
 @media print {
-    /* 1) 브라우저 기본 여백 및 배경 제거 */
     @page { 
         size: A4 portrait; 
-        margin: 5mm; 
+        margin: 2mm 3mm; 
     }
     
-    /* 2) 바디 배경 흰색으로 강제 전환 */
-    body { 
+    html, body {
+        height: 100% !important;
+        overflow: hidden !important;
         background-color: #ffffff !important; 
         background: #ffffff !important;
         color: #000000 !important; 
         display: block !important; 
-        padding: 5mm !important; 
+        padding: 0 !important; 
+        margin: 0 !important;
         opacity: 1 !important;
     }
 
-    /* 3) 모든 컨테이너 배경 제거 및 테두리 검정 설정 */
+    .print-wrapper {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
     .log-container, section, div, main {
         background-color: #ffffff !important;
         background: transparent !important;
         border-color: #000000 !important;
         box-shadow: none !important;
+        padding: 0 !important;
+        gap: 2px !important;
     }
 
-    /* 4) 인쇄 시 모든 텍스트 검정색 고정 */
     * { 
         -webkit-print-color-adjust: exact !important; 
         print-color-adjust: exact !important; 
         color: #000000 !important;
         text-shadow: none !important;
-        letter-spacing: -0.3px !important;
+        letter-spacing: -0.4px !important;
     }
 
-    /* 5) 불필요한 UI 숨기기 */
     .no-print { display: none !important; }
 
-    /* 6) 타이틀 및 헤더 스타일 조정 */
+    .print-header {
+        margin-bottom: 2px !important;
+    }
+
     .print-title { 
-        font-size: 20pt !important; 
-        margin-bottom: 1mm !important;
+        font-size: 15pt !important; 
+        margin: 0 !important;
+        padding: 0 !important;
         background: none !important;
         -webkit-text-fill-color: #000 !important;
     }
 
-    .bg-slate-800 {
+    .print-date-box {
+        padding: 2px 10px !important;
         border: 1px solid #000 !important;
         background: #ffffff !important;
     }
 
-    /* 7) 테이블 및 입력값 압축 */
+    .print-date-box span, .print-date-box input {
+        font-size: 11pt !important;
+    }
+
     td { 
-        height: 22px !important; 
-        font-size: 8pt !important; 
-        border: 1px solid #000 !important; /* 선명한 검정 테두리 */
+        height: 18.5px !important; 
+        font-size: 8.5pt !important; 
+        border: 1px solid #000 !important;
         background: #ffffff !important;
     }
     
     th { 
         font-size: 8.5pt !important;
+        padding: 1px 0 !important;
         border: 1px solid #000 !important;
-        background-color: #f1f1f1 !important; /* 헤더만 살짝 회색조 */
+        background-color: #f1f1f1 !important;
     }
 
     .att-input { 
         color: #000 !important; 
-        font-size: 8pt !important;
+        font-size: 8.5pt !important;
+        font-weight: 700 !important;
         background: transparent !important;
     }
 
-    /* 8) D/I 섹션 컬럼 너비 유지 (캡틴이 만족하셨던 그 수치!) */
-    #di-left-body td:nth-child(1), #di-right-body td:nth-child(1) { width: 35px !important; }
-    #di-left-body td:nth-child(5), #di-right-body td:nth-child(5) { width: 45px !important; } 
-    #di-left-body td:nth-child(6), #di-right-body td:nth-child(6) { width: 75px !important; } 
+    #lco2-industrial-body td:nth-child(1), #lco2-medical-body td:nth-child(1) { width: 6% !important; }
+    #lco2-industrial-body td:nth-child(2), #lco2-medical-body td:nth-child(2) { width: 14% !important; }
+    #lco2-industrial-body td:nth-child(3), #lco2-medical-body td:nth-child(3) { width: 42% !important; }
+    #lco2-industrial-body td:nth-child(4), #lco2-medical-body td:nth-child(4) { width: 21% !important; }
+    #lco2-industrial-body td:nth-child(5), #lco2-medical-body td:nth-child(5) { width: 17% !important; }
 
-    /* 9) 하단 일계 박스 디자인 */
+    #di-left-body td:nth-child(1), #di-right-body td:nth-child(1) { width: 7% !important; }
+    #di-left-body td:nth-child(2), #di-right-body td:nth-child(2) { width: 28% !important; } 
+    #di-left-body td:nth-child(3), #di-right-body td:nth-child(3) { width: 18% !important; } 
+    #di-left-body td:nth-child(4), #di-right-body td:nth-child(4) { width: 11% !important; } 
+    #di-left-body td:nth-child(5), #di-right-body td:nth-child(5) { width: 20% !important; } 
+    #di-left-body td:nth-child(6), #di-right-body td:nth-child(6) { width: 16% !important; } 
+
     .bg-slate-900 { 
         background: #ffffff !important;
-        border-top: 2px solid #000 !important;
+        border-top: 1.5px solid #000 !important;
+        padding: 2px !important;
     }
 
     .bg-emerald-900\/30, .bg-amber-900\/30, .bg-blue-900\/40, .bg-purple-900\/40 {
         background: #ffffff !important;
         border: 1px solid #000 !important;
         color: #000 !important;
+        padding: 2px 6px !important;
     }
 }
